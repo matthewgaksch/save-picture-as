@@ -74,7 +74,7 @@ The extension also requests host access for `http://*/*` and `https://*/*` so it
 
 If you like this project, consider:
 - ⭐ Starring the repo
-- ☕ Support my work: https://buymeacoffee.com/matthewgaksch
+- ☕ Supporting my work: https://buymeacoffee.com/matthewgaksch
 
 ## License
 
