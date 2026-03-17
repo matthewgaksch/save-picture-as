@@ -8,6 +8,7 @@ const jpegQualityInput = document.getElementById("jpeg-quality");
 const webpQualityInput = document.getElementById("webp-quality");
 const jpegQualityValue = document.getElementById("jpeg-quality-value");
 const webpQualityValue = document.getElementById("webp-quality-value");
+const presetButtons = document.querySelectorAll("[data-preset-quality]");
 const SETTING_INPUTS = {
   jpegQuality: jpegQualityInput,
   webpQuality: webpQualityInput
@@ -27,6 +28,7 @@ initializePopup().catch((error) => {
 
 async function initializePopup() {
   registerSliderListeners();
+  registerPresetListeners();
   applySettingsToUi(DEFAULT_SETTINGS);
 
   const storedSettings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
@@ -58,6 +60,14 @@ function registerSliderListeners() {
   }
 }
 
+function registerPresetListeners() {
+  for (const button of presetButtons) {
+    button.addEventListener("click", () => {
+      applyPreset(button.dataset.presetQuality).catch(logError);
+    });
+  }
+}
+
 function handleSliderInput(key, input) {
   touchedSettings[key] = true;
   updateSettingValue(
@@ -67,12 +77,30 @@ function handleSliderInput(key, input) {
 }
 
 async function saveSetting(key, value) {
-  const quality = normalizeQuality(value, DEFAULT_SETTINGS[key]);
-
-  updateSettingValue(key, quality);
-  await chrome.storage.sync.set({
-    [key]: quality
+  await saveSettings({
+    [key]: value
   });
+}
+
+async function applyPreset(value) {
+  await saveSettings({
+    jpegQuality: value,
+    webpQuality: value
+  });
+}
+
+async function saveSettings(updates) {
+  const normalizedUpdates = {};
+
+  for (const [key, value] of Object.entries(updates)) {
+    const quality = normalizeQuality(value, DEFAULT_SETTINGS[key]);
+
+    touchedSettings[key] = true;
+    normalizedUpdates[key] = quality;
+    updateSettingValue(key, quality);
+  }
+
+  await chrome.storage.sync.set(normalizedUpdates);
 }
 
 function applySettingsToUi(settings) {

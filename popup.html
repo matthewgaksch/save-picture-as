@@ -60,6 +60,43 @@
         color: rgba(235, 235, 245, 0.62);
       }
 
+      .preset-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .preset-button {
+        flex: 1;
+        padding: 8px 0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.88);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background-color 160ms ease,
+          border-color 160ms ease,
+          transform 160ms ease;
+      }
+
+      .preset-button:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(10, 132, 255, 0.24);
+      }
+
+      .preset-button:active {
+        transform: translateY(1px);
+      }
+
+      .preset-button:focus-visible {
+        outline: none;
+        border-color: rgba(10, 132, 255, 0.4);
+        box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.16);
+      }
+
       .setting-value {
         font-size: 13px;
         color: rgba(255, 255, 255, 0.92);
@@ -155,6 +192,23 @@
   <body>
     <main>
       <h1>Save Picture As…</h1>
+
+      <section>
+        <div class="setting-header">
+          <span class="setting-title">Presets</span>
+        </div>
+        <div class="preset-buttons">
+          <button class="preset-button" type="button" data-preset-quality="0.92">
+            High
+          </button>
+          <button class="preset-button" type="button" data-preset-quality="0.8">
+            Balanced
+          </button>
+          <button class="preset-button" type="button" data-preset-quality="0.6">
+            Small
+          </button>
+        </div>
+      </section>
 
       <section>
         <div class="setting-header">
