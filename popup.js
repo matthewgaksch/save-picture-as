@@ -2,11 +2,20 @@ const DEFAULT_SETTINGS = {
   jpegQuality: 0.92,
   webpQuality: 0.9
 };
+const SETTING_KEYS = ["jpegQuality", "webpQuality"];
 
 const jpegQualityInput = document.getElementById("jpeg-quality");
 const webpQualityInput = document.getElementById("webp-quality");
 const jpegQualityValue = document.getElementById("jpeg-quality-value");
 const webpQualityValue = document.getElementById("webp-quality-value");
+const SETTING_INPUTS = {
+  jpegQuality: jpegQualityInput,
+  webpQuality: webpQualityInput
+};
+const SETTING_LABELS = {
+  jpegQuality: jpegQualityValue,
+  webpQuality: webpQualityValue
+};
 const touchedSettings = {
   jpegQuality: false,
   webpQuality: false
@@ -36,21 +45,17 @@ async function initializePopup() {
 }
 
 function registerSliderListeners() {
-  jpegQualityInput.addEventListener("input", () => {
-    handleSliderInput("jpegQuality", jpegQualityInput);
-  });
+  for (const key of SETTING_KEYS) {
+    const input = SETTING_INPUTS[key];
 
-  jpegQualityInput.addEventListener("change", () => {
-    saveSetting("jpegQuality", jpegQualityInput.value).catch(logError);
-  });
+    input.addEventListener("input", () => {
+      handleSliderInput(key, input);
+    });
 
-  webpQualityInput.addEventListener("input", () => {
-    handleSliderInput("webpQuality", webpQualityInput);
-  });
-
-  webpQualityInput.addEventListener("change", () => {
-    saveSetting("webpQuality", webpQualityInput.value).catch(logError);
-  });
+    input.addEventListener("change", () => {
+      saveSetting(key, input.value).catch(logError);
+    });
+  }
 }
 
 function handleSliderInput(key, input) {
@@ -71,26 +76,23 @@ async function saveSetting(key, value) {
 }
 
 function applySettingsToUi(settings) {
-  updateSettingValue("jpegQuality", settings.jpegQuality);
-  updateSettingValue("webpQuality", settings.webpQuality);
+  for (const key of SETTING_KEYS) {
+    updateSettingValue(key, settings[key]);
+  }
 }
 
 function applyStoredSettings(settings) {
-  if (!touchedSettings.jpegQuality) {
-    updateSettingValue("jpegQuality", settings.jpegQuality);
-  }
-
-  if (!touchedSettings.webpQuality) {
-    updateSettingValue("webpQuality", settings.webpQuality);
+  for (const key of SETTING_KEYS) {
+    if (!touchedSettings[key]) {
+      updateSettingValue(key, settings[key]);
+    }
   }
 }
 
 function updateSettingValue(key, quality) {
   const percentage = formatPercentage(quality);
-  const input =
-    key === "jpegQuality" ? jpegQualityInput : webpQualityInput;
-  const valueLabel =
-    key === "jpegQuality" ? jpegQualityValue : webpQualityValue;
+  const input = SETTING_INPUTS[key];
+  const valueLabel = SETTING_LABELS[key];
 
   input.value = String(quality);
   input.style.setProperty("--slider-progress", formatSliderProgress(input));
