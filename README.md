@@ -1,5 +1,9 @@
 # Save Picture As…
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Support-Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/matthewgaksch)
+![Chrome](https://img.shields.io/badge/Chrome-Extension-blue)
+![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
+
 A simple, privacy-friendly Chrome extension to save pictures as PNG, JPEG, or WebP — fast, local, and private.
 
 ## Features
@@ -12,6 +16,11 @@ A simple, privacy-friendly Chrome extension to save pictures as PNG, JPEG, or We
 - Clean, minimal popup UI
 - Fully local processing (no uploads)
 - Fast and lightweight
+
+## Why
+
+Most image-saving tools either reduce quality or rely on external services.  
+This extension keeps everything local, fast, and under your control.
 
 ## Screenshots
 
@@ -61,6 +70,12 @@ The extension also requests host access for `http://*/*` and `https://*/*` so it
 - Offscreen document for canvas processing
 - Popup UI for quality settings
 
+## ❤️ Support
+
+If you like this project, consider:
+- ⭐ Starring the repo
+- ☕ Support my work: https://buymeacoffee.com/matthewgaksch
+
 ## License
 
 MIT License
@@ -71,4 +86,4 @@ This project is an independent implementation and is not affiliated with or endo
 
 ---
 
-Made by Matthew Gaksch
+Made with ❤️ by Matthew Gaksch
