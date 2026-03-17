@@ -1,4 +1,5 @@
 const OFFSCREEN_DOCUMENT_PATH = "offscreen.html";
+const OFFSCREEN_MESSAGE_TIMEOUT_MS = 30000;
 const DEFAULT_SETTINGS = {
   jpegQuality: 0.92,
   webpQuality: 0.9
@@ -237,7 +238,26 @@ function createContextMenu(menuItem) {
 
 async function sendMessageToOffscreen(message) {
   return new Promise((resolve, reject) => {
+    let settled = false;
+    const timeoutId = setTimeout(() => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      reject(
+        new Error("The offscreen converter timed out before responding.")
+      );
+    }, OFFSCREEN_MESSAGE_TIMEOUT_MS);
+
     chrome.runtime.sendMessage(message, (response) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      clearTimeout(timeoutId);
+
       if (chrome.runtime.lastError) {
         reject(new Error(chrome.runtime.lastError.message));
         return;

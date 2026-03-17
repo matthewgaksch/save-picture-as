@@ -40,6 +40,7 @@ A simple, privacy-friendly Chrome extension to save pictures as PNG, JPEG, or We
 ## Privacy
 
 All picture conversion happens locally in your browser.
+
 - No data is uploaded  
 - No tracking  
 - No external servers
@@ -59,7 +60,6 @@ The extension also requests host access for `http://*/*` and `https://*/*` so it
 - Vanilla JavaScript
 - Offscreen document for canvas processing
 - Popup UI for quality settings
-
 
 ## License
 
