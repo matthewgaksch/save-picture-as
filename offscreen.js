@@ -1,33 +1,33 @@
-const DEFAULT_QUALITY = 0.92;
-
-const MIME_TYPES = {
-  png: "image/png",
-  jpeg: "image/jpeg",
-  webp: "image/webp"
-};
+console.log("Offscreen loaded");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message?.type !== "convert-picture") {
-    return undefined;
+  console.log("Offscreen raw message:", message, sender);
+
+  if (message?.type !== "convert") {
+    return;
   }
 
-  convertPicture(message)
-    .then((dataUrl) => {
+  (async () => {
+    try {
+      console.log("Offscreen received convert message");
+      const dataUrl = await convertPicture(message);
+      console.log("Offscreen sending response");
       sendResponse({ dataUrl });
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error("[Save Picture As]", error);
-      sendResponse({ error: error.message });
-    });
+      sendResponse({
+        error: error?.message || "Conversion failed"
+      });
+    }
+  })();
 
+  // Keep the message channel open while the offscreen conversion finishes.
   return true;
 });
 
-async function convertPicture({ srcUrl, format }) {
-  const mimeType = MIME_TYPES[format];
-
-  if (!mimeType) {
-    throw new Error(`Unsupported picture format: ${format}`);
+async function convertPicture({ srcUrl, mimeType, settings = {} }) {
+  if (!isSupportedMimeType(mimeType)) {
+    throw new Error(`Unsupported picture format: ${mimeType}`);
   }
 
   const sourceBlob = await fetchSourceBlob(srcUrl);
@@ -43,7 +43,7 @@ async function convertPicture({ srcUrl, format }) {
     sourceCanvas.height = bitmap.height;
 
     const sourceContext = sourceCanvas.getContext("2d", {
-      willReadFrequently: format === "jpeg"
+      willReadFrequently: mimeType === "image/jpeg"
     });
 
     if (!sourceContext) {
@@ -64,7 +64,7 @@ async function convertPicture({ srcUrl, format }) {
 
     // JPEG cannot store transparency, so transparent pixels are flattened to white.
     if (
-      format === "jpeg" &&
+      mimeType === "image/jpeg" &&
       hasTransparency(sourceContext, bitmap.width, bitmap.height)
     ) {
       outputContext.fillStyle = "#ffffff";
@@ -73,7 +73,7 @@ async function convertPicture({ srcUrl, format }) {
 
     outputContext.drawImage(sourceCanvas, 0, 0);
 
-    const quality = format === "png" ? undefined : DEFAULT_QUALITY;
+    const quality = getOutputQuality(mimeType, settings);
     const convertedBlob = await canvasToBlob(outputCanvas, mimeType, quality);
 
     return blobToDataUrl(convertedBlob);
@@ -82,8 +82,30 @@ async function convertPicture({ srcUrl, format }) {
   }
 }
 
+function getOutputQuality(mimeType, settings) {
+  if (mimeType === "image/jpeg") {
+    return normalizeQuality(settings?.jpegQuality, 0.92);
+  }
+
+  if (mimeType === "image/webp") {
+    return normalizeQuality(settings?.webpQuality, 0.9);
+  }
+
+  return undefined;
+}
+
+function isSupportedMimeType(mimeType) {
+  return (
+    mimeType === "image/png" ||
+    mimeType === "image/jpeg" ||
+    mimeType === "image/webp"
+  );
+}
+
 async function fetchSourceBlob(srcUrl) {
-  const response = await fetch(srcUrl);
+  const response = await fetch(srcUrl, {
+    credentials: "include"
+  });
 
   if (!response.ok) {
     throw new Error(
@@ -104,6 +126,16 @@ function hasTransparency(context, width, height) {
   }
 
   return false;
+}
+
+function normalizeQuality(value, fallback) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return fallback;
+  }
+
+  return Math.min(1, Math.max(0, numericValue));
 }
 
 function canvasToBlob(canvas, mimeType, quality) {

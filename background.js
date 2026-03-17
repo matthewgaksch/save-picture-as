@@ -1,22 +1,26 @@
 const OFFSCREEN_DOCUMENT_PATH = "offscreen.html";
+const DEFAULT_SETTINGS = {
+  jpegQuality: 0.92,
+  webpQuality: 0.9
+};
 
 const MENU_ITEMS = [
   {
     id: "save-picture-as-png",
     title: "Save Picture as PNG",
-    format: "png",
+    mimeType: "image/png",
     extension: "png"
   },
   {
     id: "save-picture-as-jpeg",
     title: "Save Picture as JPEG",
-    format: "jpeg",
+    mimeType: "image/jpeg",
     extension: "jpeg"
   },
   {
     id: "save-picture-as-webp",
     title: "Save Picture as WebP",
-    format: "webp",
+    mimeType: "image/webp",
     extension: "webp"
   }
 ];
@@ -60,15 +64,22 @@ async function handleSavePicture(srcUrl, menuItem) {
     );
   }
 
+  const settings = await getQualitySettings();
   await ensureOffscreenDocument();
 
-  const response = await sendMessageToOffscreen({
-    type: "convert-picture",
+  const message = {
+    type: "convert",
     srcUrl,
-    format: menuItem.format
-  });
+    mimeType: menuItem.mimeType,
+    settings
+  };
+
+  // Always include the latest stored quality settings with each conversion request.
+  console.log("Background sending convert message", message);
+  const response = await sendMessageToOffscreen(message);
 
   if (!response?.dataUrl) {
+    console.error("Conversion failed:", response);
     throw new Error("The converted picture data was empty.");
   }
 
@@ -80,9 +91,25 @@ async function handleSavePicture(srcUrl, menuItem) {
   });
 }
 
+async function getQualitySettings() {
+  const storedSettings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+
+  return {
+    jpegQuality: normalizeQuality(
+      storedSettings.jpegQuality,
+      DEFAULT_SETTINGS.jpegQuality
+    ),
+    webpQuality: normalizeQuality(
+      storedSettings.webpQuality,
+      DEFAULT_SETTINGS.webpQuality
+    )
+  };
+}
+
 // Reuse one hidden converter document so repeated saves do not race creation.
 async function ensureOffscreenDocument() {
   if (await hasOffscreenDocument()) {
+    console.log("Runtime contexts:", await getOffscreenContexts());
     return;
   }
 
@@ -99,23 +126,34 @@ async function ensureOffscreenDocument() {
   } finally {
     creatingOffscreenDocument = null;
   }
+
+  console.log("Runtime contexts:", await getOffscreenContexts());
 }
 
 async function hasOffscreenDocument() {
-  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
-
   if (typeof chrome.runtime.getContexts === "function") {
-    const contexts = await chrome.runtime.getContexts({
-      contextTypes: ["OFFSCREEN_DOCUMENT"],
-      documentUrls: [offscreenUrl]
-    });
+    const contexts = await getOffscreenContexts();
 
     return contexts.length > 0;
   }
 
+  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
   const matchedClients = await self.clients.matchAll();
 
   return matchedClients.some((client) => client.url === offscreenUrl);
+}
+
+async function getOffscreenContexts() {
+  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
+
+  if (typeof chrome.runtime.getContexts !== "function") {
+    return [];
+  }
+
+  return chrome.runtime.getContexts({
+    contextTypes: ["OFFSCREEN_DOCUMENT"],
+    documentUrls: [offscreenUrl]
+  });
 }
 
 function buildDownloadFilename(srcUrl, extension) {
@@ -168,6 +206,16 @@ function safeDecodeURIComponent(value) {
   }
 }
 
+function normalizeQuality(value, fallback) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return fallback;
+  }
+
+  return Math.min(1, Math.max(0, numericValue));
+}
+
 function removeAllContextMenus() {
   return new Promise((resolve, reject) => {
     chrome.contextMenus.removeAll(() => {
@@ -201,7 +249,7 @@ function createContextMenu(menuItem) {
   });
 }
 
-function sendMessageToOffscreen(message) {
+async function sendMessageToOffscreen(message) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(message, (response) => {
       if (chrome.runtime.lastError) {
@@ -211,10 +259,9 @@ function sendMessageToOffscreen(message) {
 
       if (response?.error) {
         reject(new Error(response.error));
-        return;
+      } else {
+        resolve(response);
       }
-
-      resolve(response);
     });
   });
 }

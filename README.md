@@ -7,7 +7,7 @@ A simple, privacy-friendly Chrome extension to save pictures as PNG, JPEG, or We
 - Right-click to save pictures in different formats
 - Supports PNG, JPEG, WebP
 - Smart transparency handling
-- Adjustable quality (JPEG/WebP)
+- Adjustable JPEG and WebP quality from the popup
 - Fully local processing
 
 ## Privacy
@@ -26,6 +26,7 @@ All picture conversion happens locally in your browser. No data is collected or 
 - `contextMenus` -> add right-click menu
 - `downloads` -> save converted files
 - `offscreen` -> run hidden local canvas conversion
+- `storage` -> save popup quality preferences
 
 The extension also requests host access for `http://*/*` and `https://*/*` so it can fetch the original picture data for local conversion.
 
@@ -34,3 +35,4 @@ The extension also requests host access for `http://*/*` and `https://*/*` so it
 - Manifest V3
 - Vanilla JavaScript
 - Offscreen document for canvas processing
+- Popup UI for quality settings
