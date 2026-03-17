@@ -74,8 +74,6 @@ async function handleSavePicture(srcUrl, menuItem) {
     settings
   };
 
-  // Always include the latest stored quality settings with each conversion request.
-  console.log("Background sending convert message", message);
   const response = await sendMessageToOffscreen(message);
 
   if (!response?.dataUrl) {
@@ -109,7 +107,6 @@ async function getQualitySettings() {
 // Reuse one hidden converter document so repeated saves do not race creation.
 async function ensureOffscreenDocument() {
   if (await hasOffscreenDocument()) {
-    console.log("Runtime contexts:", await getOffscreenContexts());
     return;
   }
 
@@ -126,34 +123,23 @@ async function ensureOffscreenDocument() {
   } finally {
     creatingOffscreenDocument = null;
   }
-
-  console.log("Runtime contexts:", await getOffscreenContexts());
 }
 
 async function hasOffscreenDocument() {
+  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
+
   if (typeof chrome.runtime.getContexts === "function") {
-    const contexts = await getOffscreenContexts();
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ["OFFSCREEN_DOCUMENT"],
+      documentUrls: [offscreenUrl]
+    });
 
     return contexts.length > 0;
   }
 
-  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
   const matchedClients = await self.clients.matchAll();
 
   return matchedClients.some((client) => client.url === offscreenUrl);
-}
-
-async function getOffscreenContexts() {
-  const offscreenUrl = chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH);
-
-  if (typeof chrome.runtime.getContexts !== "function") {
-    return [];
-  }
-
-  return chrome.runtime.getContexts({
-    contextTypes: ["OFFSCREEN_DOCUMENT"],
-    documentUrls: [offscreenUrl]
-  });
 }
 
 function buildDownloadFilename(srcUrl, extension) {
@@ -213,7 +199,7 @@ function normalizeQuality(value, fallback) {
     return fallback;
   }
 
-  return Math.min(1, Math.max(0, numericValue));
+  return Math.min(1, Math.max(0.1, numericValue));
 }
 
 function removeAllContextMenus() {

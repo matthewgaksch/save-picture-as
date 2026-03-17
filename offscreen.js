@@ -1,17 +1,11 @@
-console.log("Offscreen loaded");
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Offscreen raw message:", message, sender);
-
   if (message?.type !== "convert") {
     return;
   }
 
   (async () => {
     try {
-      console.log("Offscreen received convert message");
       const dataUrl = await convertPicture(message);
-      console.log("Offscreen sending response");
       sendResponse({ dataUrl });
     } catch (error) {
       console.error("[Save Picture As]", error);
@@ -135,7 +129,7 @@ function normalizeQuality(value, fallback) {
     return fallback;
   }
 
-  return Math.min(1, Math.max(0, numericValue));
+  return Math.min(1, Math.max(0.1, numericValue));
 }
 
 function canvasToBlob(canvas, mimeType, quality) {
