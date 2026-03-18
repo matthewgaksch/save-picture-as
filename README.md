@@ -4,7 +4,7 @@
 ![Chrome](https://img.shields.io/badge/Chrome-Extension-blue)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 
-A simple, privacy-friendly Chrome extension to save pictures as PNG, JPEG, or WebP — fast, local, and private.
+A fast, privacy-friendly Chrome extension that lets you save pictures as PNG, JPEG, or WebP — directly from the right-click menu.
 
 ## Features
 
@@ -24,10 +24,10 @@ This extension keeps everything local, fast, and under your control.
 
 ## Screenshots
 
-### Popup UI
+### Popup UI – Adjust quality and presets
 ![Popup Screenshot](./screenshots/popup.png)
 
-### Context Menu
+### Context Menu – Save as PNG, JPEG, or WebP
 ![Context Menu Screenshot](./screenshots/context-menu.png)
 
 ## Installation
@@ -46,13 +46,25 @@ This extension keeps everything local, fast, and under your control.
   - **Save Picture as WebP**
 - Optionally adjust quality via the extension popup
 
-## Privacy
+## Privacy Policy
 
-All picture conversion happens locally in your browser.
+Save Picture As does not collect, store, or transmit any personal data.
 
-- No data is uploaded  
-- No tracking  
-- No external servers
+All picture processing is performed locally within the user's browser. The extension does not upload pictures, track browsing activity, or send data to external servers.
+
+Permissions are used only for core functionality:
+
+- `contextMenus` is used to add right-click save options for pictures
+- `downloads` is used to save converted picture files to the user's device
+- `offscreen` is used to run local canvas-based picture conversion
+- `storage` is used to save user preferences such as JPEG and WebP quality settings
+- Host permissions are used only to fetch the picture the user explicitly selects for local conversion
+
+Save Picture As does not use analytics, advertising, tracking scripts, or third-party services.
+
+If you have any questions, you can contact:
+Matthew Gaksch
+matthew@gaksch.net
 
 ## Permissions
 
@@ -75,6 +87,10 @@ The extension also requests host access for `http://*/*` and `https://*/*` so it
 If you like this project, consider:
 - ⭐ Starring the repo
 - ☕ Supporting my work: https://buymeacoffee.com/matthewgaksch
+
+## Open Source
+
+This project is fully open source. You can view the source code and contribute on GitHub.
 
 ## License
 
