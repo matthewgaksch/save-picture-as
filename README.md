@@ -2,13 +2,37 @@
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Support-Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/matthewgaksch)
 ![Chrome](https://img.shields.io/badge/Chrome-Extension-blue)
+![Edge](https://img.shields.io/badge/Edge-Extension-blue)
+![Opera](https://img.shields.io/badge/Opera-Extension-red)
+![Brave](https://img.shields.io/badge/Brave-Extension-orange)
+![Chromium](https://img.shields.io/badge/Chromium-Compatible-lightgrey)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
 
-A fast, privacy-friendly Chrome extension that lets you save pictures as PNG, JPEG, or WebP — directly from the right-click menu.
+A fast, privacy-friendly browser extension that lets you save pictures as PNG, JPEG, or WebP — directly from the right-click menu.
+
+## 🌐 Download
+
+Get the extension from your browser’s store:
+
+- 🟦 Microsoft Edge:  
+  https://microsoftedge.microsoft.com/addons/detail/save-picture-as/ndnaijongmaianoggepapofmiemjnmmc
+
+- 🌍 Chrome Web Store:  
+  _Coming soon_
+
+- 🟥 Opera Add-ons:  
+  _Coming soon_
+
+## Supported Browsers
+
+- Google Chrome
+- Microsoft Edge
+- Opera
+- Other Chromium-based browsers (e.g. Brave, Vivaldi, Arc)
 
 ## Features
 
-- Right-click to save pictures in different formats
+- Right-click to save pictures in different formats across supported browsers
 - Supports **PNG, JPEG, WebP**
 - Adjustable quality for JPEG and WebP
 - Quick presets: **High (92%)**, **Balanced (80%)**, **Small (60%)**
@@ -21,6 +45,8 @@ A fast, privacy-friendly Chrome extension that lets you save pictures as PNG, JP
 
 Most image-saving tools either reduce quality or rely on external services.  
 This extension keeps everything local, fast, and under your control.
+
+Works consistently across modern Chromium-based browsers without relying on external services.
 
 ## Screenshots
 
@@ -63,7 +89,7 @@ Permissions are used only for core functionality:
 Save Picture As does not use analytics, advertising, tracking scripts, or third-party services.
 
 If you have any questions, you can contact:
-Matthew Gaksch
+Matthew Gaksch  
 matthew@gaksch.net
 
 ## Permissions
