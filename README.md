@@ -20,7 +20,7 @@ A fast, privacy-friendly browser extension that lets you save pictures as **PNG,
 **Chrome Web Store**
 
 [<img src="https://raw.githubusercontent.com/alrra/browser-logos/main/src/edge/edge.svg" width="48" alt="Edge" valign="middle">][link-edge]
-[<img valign="middle" src="https://img.shields.io/badge/version-1.3.0-blue?label=%20">][link-edge]
+[<img valign="middle" src="[https://img.shields.io/badge/version-1.3.0-blue?label=%20](https://img.shields.io/chrome-web-store/v/mafcbifdngfjabbmllfapnodmafpijpm.svg?label=%20)">][link-edge]
 **Microsoft Edge Add-ons**
 
 Supports all Chromium-based browsers (Chrome, Edge, Brave, Vivaldi, Arc).
